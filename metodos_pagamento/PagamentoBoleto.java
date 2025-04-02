@@ -10,7 +10,7 @@ public class PagamentoBoleto extends Pagamento {
 
     @Override
     public void processarPagamento() {
-        double valorComDesconto = valor * 0.95; // desconto de 5%
+        double valorComDesconto = valor * 0.95;
         System.out.println("Processando pagamento via boleto.");
         System.out.println("Código do Boleto: " + codigoBoleto);
         System.out.printf("Valor Original: %.2f%n", valor);

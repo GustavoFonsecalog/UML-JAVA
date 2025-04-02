@@ -1,45 +1,34 @@
 import java.util.ArrayList;
 import java.util.List;
+import metodos_pagamento.Pagamento;
 
 public class Compra {
-    private Cliente cliente;
-    private String estado;
+    private Cliente comprador;
+    private String estado;             
     private List<Item> itens;
-    private Entrega entrega;
+    private List<Pagamento> pagamentos;   
 
-    public Compra(Cliente cliente) {
-        this.cliente = cliente;
-        this.estado = "Em Aberto";
+    public Compra(Cliente comprador) {
+        this.comprador = comprador;
+        this.estado = "pendente";   
         this.itens = new ArrayList<>();
-        this.entrega = new Entrega(); // Inicializa a entrega com status "Processando"
+        this.pagamentos = new ArrayList<>();
     }
 
-    // Getters e Setters
-    public Cliente getCliente() {
-        return cliente;
-    }
+    public Cliente getComprador() { return comprador; }
+    public void setComprador(Cliente comprador) { this.comprador = comprador; }
 
-    public void setCliente(Cliente cliente) {
-        this.cliente = cliente;
-    }
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
 
-    public String getEstado() {
-        return estado;
-    }
+    public List<Item> getItens() { return itens; }
+    public List<Pagamento> getPagamentos() { return pagamentos; }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
-    }
-
-    public List<Item> getItens() {
-        return itens;
-    }
-
-    public Entrega getEntrega() {
-        return entrega;
-    }
-
+    // Adiciona um item à compra
     public void adicionarItem(Item item) {
+        if (item == null) {
+            throw new IllegalArgumentException("Item não pode ser nulo.");
+        }
         this.itens.add(item);
     }
 
@@ -51,19 +40,34 @@ public class Compra {
         return total;
     }
 
+    public void finalizarCompra(List<Pagamento> pagamentos) {
+        if (itens.isEmpty()) {
+            throw new IllegalStateException("Uma compra deve ter pelo menos um item.");
+        }
+        if (pagamentos == null || pagamentos.isEmpty()) {
+            throw new IllegalArgumentException("É necessário definir ao menos um pagamento para finalizar a compra.");
+        }
+        this.pagamentos = pagamentos;
+        this.estado = "confirmada";
+    }
+
     public void exibirCompra() {
         System.out.println("=== Dados da Compra ===");
         System.out.println("Estado: " + estado);
-        System.out.println("Dados do Cliente:");
-        cliente.exibirDados();
+        System.out.println("Dados do Comprador:");
+        comprador.exibirDados();
         System.out.println("\nItens da Compra:");
         for (Item item : itens) {
-            System.out.printf("- Produto: %s | Quantidade: %d | Valor Unitário: %.2f | Subtotal: %.2f%n", 
-                item.getProduto().getNome(), item.getQuantidade(), 
-                item.getProduto().getPrecoAtual(), item.calcularValor());
+            System.out.printf("- Produto: %s | Quantidade: %d | Valor Unitário: %.2f | Subtotal: %.2f%n",
+                              item.getProduto().getNome(), item.getQuantidade(),
+                              item.getProduto().getPrecoAtual(), item.calcularValor());
         }
         System.out.printf("Valor Total: %.2f%n", calcularTotal());
-        System.out.println("\nStatus da Entrega:");
-        entrega.exibirStatus();
+        if (!pagamentos.isEmpty()) {
+            System.out.println("\nPagamentos:");
+            for (Pagamento p : pagamentos) {
+                p.processarPagamento(); 
+            }
+        }
     }
 }

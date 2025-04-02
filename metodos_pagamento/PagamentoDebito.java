@@ -10,9 +10,8 @@ public class PagamentoDebito extends Pagamento {
 
     @Override
     public void processarPagamento() {
-        System.out.println("Processando pagamento via débito.");
+        System.out.println("Pagamento via Débito:");
         System.out.println("Número da Conta: " + numeroConta);
         System.out.printf("Valor Total: %.2f%n", valor);
-        System.out.printf("------------------------------\n");
     }
 }
